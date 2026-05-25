@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500&display=swap" rel="stylesheet">
 <style>
-:root {
+:root[data-theme="light"], :root:not([data-theme]) {
   --bg: #f0ebe1;
   --bg2: #e0d8c8;
   --accent: #d8423c;
@@ -17,6 +17,18 @@
   --yellow: #f0c020;
   --text: #1a1815;
   --dim: #5a5048;
+  --bubble-bg: #ffffff;
+}
+
+:root[data-theme="dark"] {
+  --bg: #1c1812;
+  --bg2: #14110d;
+  --accent: #e85e58;
+  --blue: #6a9ad0;
+  --yellow: #e8c850;
+  --text: #e8dcc8;
+  --dim: #8a7e6a;
+  --bubble-bg: #2a241c;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body {
@@ -25,6 +37,7 @@ html, body {
   font-family: 'Cormorant Garamond', serif;
   min-height: 100vh;
   overflow-x: hidden;
+  transition: background 0.5s, color 0.5s;
 }
 .atmosphere {
   position: fixed;
@@ -45,7 +58,7 @@ html, body {
 
 .bubble {
   position: fixed;
-  background: white;
+  background: var(--bubble-bg);
   border: 2px solid var(--text);
   border-radius: 20px;
   padding: 0.6rem 1rem;
@@ -54,7 +67,7 @@ html, body {
   color: var(--text);
   z-index: 2;
   opacity: 0;
-  transition: opacity 0.5s, transform 0.5s;
+  transition: opacity 0.5s, transform 0.5s, background 0.5s, color 0.5s;
   max-width: 200px;
   pointer-events: none;
   box-shadow: 3px 3px 0 var(--text);
@@ -71,10 +84,11 @@ html, body {
   left: 30%;
   width: 14px;
   height: 14px;
-  background: white;
+  background: var(--bubble-bg);
   border-right: 2px solid var(--text);
   border-bottom: 2px solid var(--text);
   transform: rotate(45deg);
+  transition: background 0.5s;
 }
 
 .page {
@@ -172,16 +186,23 @@ const desires = [
   'fame', 'to be remembered'
 ];
 
-const colors = ['#d8423c', '#2c5f9e', '#f0c020', '#1a1815', '#4a8a5a'];
+const colorSets = {
+  light: ['#d8423c', '#2c5f9e', '#f0c020', '#1a1815', '#4a8a5a'],
+  dark: ['#e85e58', '#6a9ad0', '#e8c850', '#e8dcc8', '#6cb27e']
+};
+
 const crowdSvg = document.getElementById('crowd-svg');
 const peopleGroup = document.getElementById('people-group');
 const crowdContainer = document.querySelector('.crowd');
 
 let people = [];
+let currentTheme = 'light';
 
 function layoutPeople() {
   peopleGroup.innerHTML = '';
   people = [];
+
+  const colors = colorSets[currentTheme] || colorSets.light;
 
   const containerWidth = crowdContainer.offsetWidth;
   const containerHeight = crowdContainer.offsetHeight;
@@ -266,6 +287,15 @@ window.addEventListener('resize', () => {
     layoutPeople();
   }, 200);
 });
+
+window.addEventListener('message', (e) => {
+  if (e.data && e.data.type === 'theme-update') {
+    currentTheme = e.data.theme;
+    document.documentElement.setAttribute('data-theme', e.data.theme);
+    if (people.length > 0) layoutPeople();
+  }
+});
+window.parent.postMessage({ type: 'theme-request' }, '*');
 </script>
 </body>
 </html>

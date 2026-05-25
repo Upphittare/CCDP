@@ -5,17 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Weekly Journal</title>
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<script src="/assets/theme.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,400&family=Space+Mono:wght@400;700&family=Caveat:wght@500&display=swap" rel="stylesheet">
 <style>
-:root {
+:root[data-theme="dark"] {
   --ink: #e8e0d0;
   --ink-dim: #8a8273;
   --paper: #0e0d0b;
   --accent: #d4a373;
   --warn: #c97064;
   --grid: rgba(212, 163, 115, 0.06);
+}
+
+:root[data-theme="light"] {
+  --ink: #2a2418;
+  --ink-dim: #7a6f5a;
+  --paper: #f0e8d4;
+  --accent: #a36a2c;
+  --warn: #a83838;
+  --grid: rgba(163, 106, 44, 0.08);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -26,6 +36,7 @@ html, body {
   font-family: 'Fraunces', serif;
   min-height: 100vh;
   overflow-x: hidden;
+  transition: background 0.5s, color 0.5s;
 }
 
 body::before {
@@ -121,7 +132,6 @@ body::after {
   font-weight: 700;
   color: var(--ink);
   font-variant-numeric: tabular-nums;
-  transition: color 0.4s, text-shadow 0.4s;
 }
 
 .clock-zone {
@@ -227,6 +237,31 @@ body::after {
 
 .enter-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
+.theme-toggle-floating {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 10;
+  background: transparent;
+  border: 1px solid var(--ink-dim);
+  color: var(--ink-dim);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.55rem 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: all 0.2s;
+}
+
+.theme-toggle-floating:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .rewind-overlay {
   position: fixed;
   inset: 0;
@@ -283,6 +318,11 @@ body::after {
 </style>
 </head>
 <body>
+<button class="theme-toggle-floating" id="theme-toggle" title="Theme">
+  <span id="theme-icon">&#9728;</span>
+  <span id="theme-label">auto</span>
+</button>
+
 <div class="frame">
   <main class="stage">
     <h1 class="title">A door that <em>knows the hour</em></h1>
@@ -411,6 +451,29 @@ async function attempt() {
 submitBtn.addEventListener('click', attempt);
 codeInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter' && codeInput.value.length === 6) attempt();
+});
+
+const themeToggle = document.getElementById('theme-toggle');
+const themeIcon = document.getElementById('theme-icon');
+const themeLabel = document.getElementById('theme-label');
+
+const icons = {
+  auto: '\u25D0',
+  system: '\u25A3',
+  light: '\u2600',
+  dark: '\u263E'
+};
+
+function updateThemeUI() {
+  const mode = window.JournalTheme.getMode();
+  themeIcon.innerHTML = icons[mode] || icons.auto;
+  themeLabel.textContent = mode;
+}
+updateThemeUI();
+
+themeToggle.addEventListener('click', () => {
+  window.JournalTheme.cycle();
+  updateThemeUI();
 });
 </script>
 </body>

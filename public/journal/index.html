@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Weekly Journal</title>
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<script src="/assets/theme.js"></script>
 <script>
 (async function gate() {
   document.documentElement.style.visibility = 'hidden';
@@ -20,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,400&family=Space+Mono:wght@400;700&family=Caveat:wght@500&display=swap" rel="stylesheet">
 <style>
-:root {
+:root[data-theme="dark"] {
   --ink: #e8e0d0;
   --ink-dim: #6b6557;
   --ink-soft: #9a9080;
@@ -28,6 +29,16 @@
   --paper-soft: #16140f;
   --accent: #d4a373;
   --line: rgba(212, 163, 115, 0.18);
+}
+
+:root[data-theme="light"] {
+  --ink: #2a2418;
+  --ink-dim: #8a7f6a;
+  --ink-soft: #5a4f40;
+  --paper: #f0e8d4;
+  --paper-soft: #e6dcc4;
+  --accent: #a36a2c;
+  --line: rgba(163, 106, 44, 0.22);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -38,6 +49,7 @@ html, body {
   font-family: 'Fraunces', serif;
   height: 100vh;
   overflow: hidden;
+  transition: background 0.5s, color 0.5s;
 }
 
 .shell {
@@ -53,6 +65,7 @@ html, body {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  transition: background 0.5s, border-color 0.5s;
 }
 
 .brand {
@@ -98,13 +111,13 @@ html, body {
 }
 
 .weeks li button:hover {
-  background: rgba(212, 163, 115, 0.04);
+  background: rgba(212, 163, 115, 0.08);
   color: var(--ink);
 }
 
 .weeks li button.active {
   border-left-color: var(--accent);
-  background: rgba(212, 163, 115, 0.06);
+  background: rgba(212, 163, 115, 0.1);
   color: var(--ink);
 }
 
@@ -147,16 +160,45 @@ html, body {
   font-variant-numeric: tabular-nums;
 }
 
+.theme-toggle {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.55rem 0.7rem;
+  margin-top: 0.6rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  transition: all 0.2s;
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.theme-toggle .icon {
+  font-size: 1rem;
+}
+
 .main {
   position: relative;
   overflow: hidden;
+  background: var(--paper);
+  transition: background 0.5s;
 }
 
 #frame {
   width: 100%;
   height: 100%;
   border: none;
-  background: var(--paper);
+  background: transparent;
   display: block;
 }
 
@@ -177,6 +219,7 @@ html, body {
   justify-content: center;
   gap: 5px;
   padding: 0;
+  transition: background 0.5s, border-color 0.5s;
 }
 
 .menu-toggle span {
@@ -214,7 +257,7 @@ html, body {
     width: 280px;
     z-index: 45;
     transform: translateX(-100%);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, background 0.5s, border-color 0.5s;
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
   }
   .aside.open {
@@ -258,6 +301,10 @@ html, body {
     <div class="aside-foot">
       <div>Melbourne</div>
       <div class="now" id="now">&mdash;&mdash;:&mdash;&mdash;</div>
+      <button class="theme-toggle" id="theme-toggle" title="Theme">
+        <span class="icon" id="theme-icon">&#9728;</span>
+        <span id="theme-label">auto</span>
+      </button>
     </div>
   </aside>
 
@@ -289,13 +336,11 @@ function closeMenu() {
   overlay.classList.remove('show');
   menuToggle.classList.remove('open');
 }
-
 function openMenu() {
   aside.classList.add('open');
   overlay.classList.add('show');
   menuToggle.classList.add('open');
 }
-
 menuToggle.addEventListener('click', () => {
   if (aside.classList.contains('open')) closeMenu();
   else openMenu();
@@ -322,6 +367,53 @@ window.addEventListener('message', (e) => {
   if (e.data && e.data.type === 'goto-week') {
     selectWeek(e.data.week);
   }
+  if (e.data && e.data.type === 'week10-slide-changed') {
+    window.__week10Slide = e.data.index;
+  }
+  if (e.data && e.data.type === 'week10-request-slide') {
+    const idx = typeof window.__week10Slide === 'number' ? window.__week10Slide : 0;
+    try {
+      frame.contentWindow.postMessage({ type: 'week10-restore-slide', index: idx }, '*');
+    } catch (err) {}
+  }
+  if (e.data && e.data.type === 'theme-request') {
+    const mode = window.JournalTheme.getMode();
+    const effective = document.documentElement.getAttribute('data-theme');
+    try {
+      e.source.postMessage({ type: 'theme-update', theme: effective, mode }, '*');
+    } catch (err) {}
+  }
+});
+
+frame.addEventListener('load', () => {
+  const mode = window.JournalTheme.getMode();
+  const effective = document.documentElement.getAttribute('data-theme');
+  try {
+    frame.contentWindow.postMessage({ type: 'theme-update', theme: effective, mode }, '*');
+  } catch (e) {}
+});
+
+const themeToggle = document.getElementById('theme-toggle');
+const themeIcon = document.getElementById('theme-icon');
+const themeLabel = document.getElementById('theme-label');
+
+const icons = {
+  auto: '\u25D0',
+  system: '\u25A3',
+  light: '\u2600',
+  dark: '\u263E'
+};
+
+function updateThemeUI() {
+  const mode = window.JournalTheme.getMode();
+  themeIcon.innerHTML = icons[mode] || icons.auto;
+  themeLabel.textContent = mode;
+}
+updateThemeUI();
+
+themeToggle.addEventListener('click', () => {
+  window.JournalTheme.cycle();
+  updateThemeUI();
 });
 
 const initial = window.location.hash.match(/^#week(\d+)$/);

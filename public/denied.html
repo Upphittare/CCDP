@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Out of Sync</title>
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<script src="/assets/theme.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&family=Space+Mono&display=swap" rel="stylesheet">
@@ -17,6 +18,12 @@ html, body {
   min-height: 100vh;
   font-family: 'Fraunces', serif;
   overflow: hidden;
+  transition: background 0.5s, color 0.5s;
+}
+
+:root[data-theme="light"] body {
+  background: #f0e8d4;
+  color: #a83838;
 }
 
 .stage {
@@ -78,6 +85,20 @@ html, body {
   inset: 0;
   background: radial-gradient(ellipse at center, rgba(201, 112, 100, 0.04) 0%, transparent 60%);
   pointer-events: none;
+}
+
+:root[data-theme="light"] .statement,
+:root[data-theme="light"] .reverse-clock {
+  color: #a83838;
+}
+
+:root[data-theme="light"] .sub {
+  color: #8a5045;
+}
+
+:root[data-theme="light"] .sub a {
+  color: #a83838;
+  border-bottom-color: #8a5045;
 }
 </style>
 </head>

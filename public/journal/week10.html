@@ -111,10 +111,10 @@ html, body {
   font-size: 1.18rem;
   line-height: 1.85;
   color: var(--text);
-  background: rgba(10, 8, 8, 0.78);
+  background: rgba(10, 8, 8, 0.5);
   padding: 2.2rem;
   border: 1px solid rgba(232, 184, 90, 0.2);
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(3px);
 }
 .body-text p { margin-bottom: 1.8rem; }
 .body-text em { font-style: italic; color: var(--accent); }
@@ -167,20 +167,41 @@ const images = [
 ];
 
 const slideshow = document.getElementById('slideshow');
-images.forEach((src, i) => {
+images.forEach((src) => {
   const slide = document.createElement('div');
   slide.className = 'slide';
   slide.style.backgroundImage = `url('${src}')`;
-  if (i === 0) slide.classList.add('active');
   slideshow.appendChild(slide);
 });
 
 const slides = document.querySelectorAll('.slide');
 let current = 0;
+
+try {
+  window.parent.postMessage({ type: 'week10-request-slide' }, '*');
+} catch (e) {}
+
+window.addEventListener('message', (e) => {
+  if (e.data && e.data.type === 'week10-restore-slide' && typeof e.data.index === 'number') {
+    current = e.data.index % slides.length;
+    slides.forEach(s => s.classList.remove('active'));
+    slides[current].classList.add('active');
+  }
+});
+
+setTimeout(() => {
+  if (!document.querySelector('.slide.active')) {
+    slides[current].classList.add('active');
+  }
+}, 100);
+
 setInterval(() => {
   slides[current].classList.remove('active');
   current = (current + 1) % slides.length;
   slides[current].classList.add('active');
+  try {
+    window.parent.postMessage({ type: 'week10-slide-changed', index: current }, '*');
+  } catch (e) {}
 }, 30000);
 </script>
 </body>
