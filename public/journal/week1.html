@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 1 &mdash; Breaking the labels</title>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Caveat:wght@400;500;700&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+:root[data-theme="light"], :root:not([data-theme]) {
+  --paper: #ebe2cf;
+  --paper-shadow: #d8cdb4;
+  --paper-glow: #f3ead7;
+  --ink: #2a2418;
+  --ink-soft: #4a3f30;
+  --ink-faded: #8b7f6a;
+  --rule: #c2b598;
+  --red-pen: #a3372e;
+  --blue-pen: #2c4a6b;
+  --margin: #8b3a2a;
+}
+
+:root[data-theme="dark"] {
+  --paper: #1c1714;
+  --paper-shadow: #14100d;
+  --paper-glow: #251f1a;
+  --ink: #e8dccc;
+  --ink-soft: #b8a890;
+  --ink-faded: #6b5f50;
+  --rule: #3a3225;
+  --red-pen: #d96a5a;
+  --blue-pen: #6a9ad0;
+  --margin: #c2604a;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  background:
+    radial-gradient(ellipse at 20% 0%, var(--paper-glow) 0%, var(--paper) 40%, var(--paper-shadow) 100%);
+  color: var(--ink);
+  font-family: 'Cormorant Garamond', serif;
+  min-height: 100vh;
+  position: relative;
+  transition: background 0.5s, color 0.5s;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 31px,
+      var(--rule) 32px,
+      transparent 33px
+    );
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; bottom: 0;
+  left: clamp(2rem, 8vw, 6rem);
+  width: 2px;
+  background: var(--margin);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page {
+  position: relative;
+  z-index: 1;
+  padding: 3rem clamp(4rem, 10vw, 8rem) 5rem clamp(5rem, 12vw, 9rem);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.weekstamp {
+  font-family: 'Special Elite', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  color: var(--red-pen);
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+  transform: rotate(-1.5deg);
+  display: inline-block;
+  border: 2px solid var(--red-pen);
+  padding: 0.3rem 0.8rem;
+}
+
+.title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-style: italic;
+  font-size: clamp(2.6rem, 5vw, 4rem);
+  line-height: 1;
+  margin: 1rem 0 0.5rem;
+  color: var(--ink);
+}
+
+.subtitle {
+  font-family: 'Caveat', cursive;
+  font-size: 1.4rem;
+  color: var(--ink-soft);
+  margin-bottom: 3rem;
+}
+
+.wall-scene {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1.5rem;
+  margin: 2rem 0 4rem;
+  padding: 2rem 0;
+  border-top: 1px solid var(--ink-faded);
+  border-bottom: 1px solid var(--ink-faded);
+}
+
+.wall-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  letter-spacing: 0.05em;
+  position: relative;
+  opacity: 0;
+  animation: fadeIn 1s 0.3s forwards;
+}
+
+.wall-label.arts {
+  font-style: italic;
+  color: var(--blue-pen);
+  text-align: right;
+}
+
+.wall-label.sci {
+  font-family: 'Special Elite', monospace;
+  color: var(--ink);
+  text-align: left;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+}
+
+.wall-label .strike {
+  position: absolute;
+  inset: 50% 0 auto 0;
+  height: 4px;
+  background: var(--red-pen);
+  transform-origin: left center;
+  transform: scaleX(0) rotate(-3deg);
+  animation: strike 0.8s 1.4s forwards;
+}
+
+.wall {
+  width: 24px;
+  height: 8rem;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      var(--ink-soft) 0 18px,
+      var(--paper) 18px 22px
+    );
+  border-radius: 2px;
+  position: relative;
+  opacity: 0;
+  animation: fadeIn 0.6s 0.6s forwards;
+}
+
+.wall::before, .wall::after {
+  content: '';
+  position: absolute;
+  background: var(--paper);
+  width: 30px;
+  height: 6px;
+  left: -3px;
+  transform-origin: left center;
+  opacity: 0;
+}
+
+.wall::before {
+  top: 30%;
+  animation: crack 0.5s 2s forwards;
+  transform: rotate(8deg);
+}
+
+.wall::after {
+  top: 60%;
+  animation: crack 0.5s 2.2s forwards;
+  transform: rotate(-12deg);
+}
+
+@keyframes fadeIn { to { opacity: 1; } }
+@keyframes strike { to { transform: scaleX(1) rotate(-3deg); } }
+@keyframes crack {
+  0% { opacity: 0; width: 4px; }
+  100% { opacity: 1; width: 30px; }
+}
+
+.wall-caption {
+  grid-column: 1 / -1;
+  text-align: center;
+  font-family: 'Caveat', cursive;
+  font-size: 1.25rem;
+  color: var(--margin);
+  margin-top: 1.5rem;
+  opacity: 0;
+  animation: fadeIn 1s 2.6s forwards;
+}
+
+.body-text {
+  font-size: 1.18rem;
+  line-height: 1.85;
+  color: var(--ink);
+}
+
+.body-text p {
+  margin-bottom: 1.6rem;
+  text-indent: 1.5em;
+}
+
+.body-text p:first-of-type { text-indent: 0; }
+
+.body-text p:first-of-type::first-letter {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-style: italic;
+  font-size: 4.4em;
+  float: left;
+  line-height: 0.85;
+  padding: 0.05em 0.1em 0 0;
+  color: var(--red-pen);
+}
+
+.tag {
+  display: inline-block;
+  position: relative;
+  font-family: 'Special Elite', monospace;
+  font-size: 0.9em;
+  padding: 0 0.35em;
+  background: rgba(163, 55, 46, 0.07);
+  border: 1px solid var(--red-pen);
+  color: var(--red-pen);
+  margin: 0 0.15em;
+  white-space: nowrap;
+}
+
+.tag::after {
+  content: '';
+  position: absolute;
+  left: -3px; right: -3px;
+  top: 50%;
+  height: 2px;
+  background: var(--red-pen);
+  transform: rotate(-2deg);
+}
+
+.pull {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.6rem;
+  line-height: 1.4;
+  border-left: 4px solid var(--blue-pen);
+  padding: 0.5rem 0 0.5rem 1.5rem;
+  margin: 2.5rem 0;
+  color: var(--ink-soft);
+}
+
+.pull .em {
+  color: var(--blue-pen);
+  font-weight: 600;
+}
+
+@media (max-width: 700px) {
+  body::after { left: 1.5rem; }
+  .wall { height: 5rem; }
+  .wall-scene { gap: 0.5rem; }
+}
+</style>
+</head>
+<body>
+<article class="page">
+
+  <div class="weekstamp">Week 01 &middot; 2 March</div>
+  <h1 class="title">Breaking the labels</h1>
+  <p class="subtitle">adaptive intelligence in the twenty-first century</p>
+
+  <div class="wall-scene">
+    <div class="wall-label arts">Arts<span class="strike"></span></div>
+    <div class="wall"></div>
+    <div class="wall-label sci">SCIENCES<span class="strike"></span></div>
+    <div class="wall-caption">a wall built in the nineteenth century, still standing in mine</div>
+  </div>
+
+  <div class="body-text">
+    <p>
+      The lecture this week hit me pretty hard, especially the professor's critique of the nineteenth-century specialised education model. It immediately reminded me of the high school system back in my country, where students get rigidly divided into <span class="tag">Arts</span> (history, literature) or <span class="tag">Sciences</span> (physics, chemistry). Basically a labelling system. Once you pick, you become stereotyped as a <span class="tag">STEM guy</span> or an <span class="tag">Arts girl</span>, and it breeds these terrible prejudices &mdash; like the absurd idea that studying arts makes you some kind of useless <span class="tag">decorative vase</span>. The sad part is most students don't even pick based on what they actually like; they pick based on job prospects, or just whatever their parents want. The professor's point about cross-disciplinary thinking made me realise that breaking these walls isn't really about mixing subjects. It's more about helping people with totally different mindsets actually understand each other and look at the world without prejudice.
+    </p>
+
+    <p>
+      When he talked about &lsquo;adaptive intelligence&rsquo; and shared the story of the hospitalised student who used a taped iPad to do his presentation, I thought that was kind of perfect. To me that's exactly what human curiosity looks like &mdash; the pure desire to figure something out. That drive is what's been pushing humans forward for tens of thousands of years. I'll admit I struggled to immediately come up with a cross-disciplinary example like the tree-inspired water pump (biomimicry) he mentioned in class, and honestly I think that hesitation itself says something about how rigidly categorised my own education has been.
+    </p>
+
+    <div class="pull">
+      The point of education shouldn't be turning us into robots that memorise stuff &mdash; <span class="em">robots already do that better than us.</span>
+    </div>
+
+    <p>
+      We're living in an era flooded with AI right now. But I think fundamentally, AI is just a probability engine doing predictive word combinations. It doesn't really have creativity, vitality, or imagination that can adapt. The point of education shouldn't be turning us into robots that memorise stuff &mdash; robots already do that better than us. It should be about getting back our distinctly human ability to creatively problem-solve, like that student with the iPad did.
+    </p>
+  </div>
+
+</article>
+
+<script>
+window.addEventListener('message', (e) => {
+  if (e.data && e.data.type === 'theme-update') {
+    document.documentElement.setAttribute('data-theme', e.data.theme);
+  }
+});
+window.parent.postMessage({ type: 'theme-request' }, '*');
+</script>
+</body>
+</html>

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekly Journal</title>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<script src="/assets/theme.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,400&family=Space+Mono:wght@400;700&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<style>
+:root[data-theme="dark"] {
+  --ink: #e8e0d0;
+  --ink-dim: #8a8273;
+  --paper: #0e0d0b;
+  --accent: #d4a373;
+  --warn: #c97064;
+  --grid: rgba(212, 163, 115, 0.06);
+}
+
+:root[data-theme="light"] {
+  --ink: #2a2418;
+  --ink-dim: #7a6f5a;
+  --paper: #f0e8d4;
+  --accent: #a36a2c;
+  --warn: #a83838;
+  --grid: rgba(163, 106, 44, 0.08);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Fraunces', serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.5s, color 0.5s;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 0%, var(--paper) 75%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.frame {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: 1fr;
+  padding: 2.5rem clamp(1.5rem, 5vw, 4rem);
+}
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 0;
+  gap: 2.25rem;
+}
+
+.title {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-size: clamp(2.5rem, 7vw, 5.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  font-variation-settings: "opsz" 144;
+}
+
+.title em {
+  font-style: italic;
+  color: var(--accent);
+  font-weight: 400;
+}
+
+.subtitle {
+  font-family: 'Caveat', cursive;
+  font-size: clamp(1.1rem, 2vw, 1.45rem);
+  color: var(--ink-dim);
+  max-width: 38rem;
+  line-height: 1.4;
+}
+
+.clockface {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 3rem);
+  width: 100%;
+  max-width: 56rem;
+  padding: 1.75rem 0;
+  border-top: 1px solid var(--ink-dim);
+  border-bottom: 1px solid var(--ink-dim);
+}
+
+.clock-cell { text-align: left; }
+.clock-cell.right { text-align: right; }
+
+.clock-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 0.6rem;
+}
+
+.clock-time {
+  font-family: 'Space Mono', monospace;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 700;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.clock-zone {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--ink-dim);
+  margin-top: 0.4rem;
+}
+
+.clock-divider {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 1.6rem;
+  color: var(--accent);
+  opacity: 0.6;
+}
+
+.clock-cell.key { position: relative; }
+.clock-cell.key .clock-label { color: var(--accent); }
+.clock-cell.key .clock-time {
+  color: var(--accent);
+  font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+  text-shadow: 0 0 30px rgba(212, 163, 115, 0.3);
+}
+
+.key-hint {
+  font-family: 'Caveat', cursive;
+  font-size: 1.15rem;
+  color: var(--accent);
+  text-align: right;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+.drift-notice {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--ink-dim);
+  text-align: center;
+  min-height: 1.5em;
+  transition: color 0.4s;
+}
+
+.drift-notice.alert { color: var(--warn); }
+
+.gate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 24rem;
+}
+
+.gate-instruction {
+  font-family: 'Caveat', cursive;
+  font-size: 1.25rem;
+  color: var(--accent);
+  line-height: 1.4;
+  max-width: 22rem;
+}
+
+.code-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--ink-dim);
+  padding: 0.9rem 0.4rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 2rem;
+  letter-spacing: 0.5em;
+  text-align: center;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.code-input::placeholder { color: var(--ink-dim); opacity: 0.4; }
+.code-input:focus { border-bottom-color: var(--accent); }
+
+.enter-btn {
+  background: transparent;
+  border: 1px solid var(--ink-dim);
+  color: var(--ink);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  padding: 0.9rem 2.4rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 0.5rem;
+}
+
+.enter-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  letter-spacing: 0.4em;
+}
+
+.enter-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.theme-toggle-floating {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 10;
+  background: transparent;
+  border: 1px solid var(--ink-dim);
+  color: var(--ink-dim);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.55rem 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: all 0.2s;
+}
+
+.theme-toggle-floating:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.rewind-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--paper);
+  z-index: 100;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+
+.rewind-overlay.show {
+  display: flex;
+  opacity: 1;
+}
+
+.rewind-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0.8;
+}
+
+.rewind-clock {
+  font-family: 'Space Mono', monospace;
+  font-size: clamp(3rem, 9vw, 6rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  text-shadow: 0 0 40px rgba(212, 163, 115, 0.4);
+  letter-spacing: 0.05em;
+}
+
+.rewind-caption {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 1.2rem;
+  color: var(--ink-dim);
+  max-width: 30rem;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .clockface { grid-template-columns: 1fr; gap: 1.5rem; }
+  .clock-cell, .clock-cell.right { text-align: center; }
+  .clock-divider { display: none; }
+  .key-hint { text-align: center; }
+}
+</style>
+</head>
+<body>
+<button class="theme-toggle-floating" id="theme-toggle" title="Theme">
+  <span id="theme-icon">&#9728;</span>
+  <span id="theme-label">auto</span>
+</button>
+
+<div class="frame">
+  <main class="stage">
+    <h1 class="title">A door that <em>knows the hour</em></h1>
+    <p class="subtitle">The time is the key. Transcribe what you see on the right &mdash; six digits, no colons.</p>
+
+    <div class="clockface">
+      <div class="clock-cell">
+        <div class="clock-label">You</div>
+        <div class="clock-time" id="local-time">&mdash;&mdash;:&mdash;&mdash;:&mdash;&mdash;</div>
+        <div class="clock-zone" id="local-zone">detecting&hellip;</div>
+      </div>
+      <div class="clock-divider">&rarr;</div>
+      <div class="clock-cell key right">
+        <div class="clock-label">Here &middot; the key</div>
+        <div class="clock-time" id="melb-time">&mdash;&mdash;:&mdash;&mdash;:&mdash;&mdash;</div>
+        <div class="clock-zone">Australia / Melbourne</div>
+        <div class="key-hint">copy these six digits &darr;</div>
+      </div>
+    </div>
+
+    <div class="drift-notice" id="drift">&nbsp;</div>
+
+    <div class="gate">
+      <p class="gate-instruction">whatever the Melbourne clock says, right now, that is the code</p>
+      <input class="code-input" id="code" type="text" inputmode="numeric" maxlength="6" placeholder="HHMMSS" autocomplete="off">
+      <button class="enter-btn" id="submit" disabled>Open</button>
+    </div>
+  </main>
+</div>
+
+<div class="rewind-overlay" id="rewind">
+  <div class="rewind-label">unwinding</div>
+  <div class="rewind-clock" id="rewind-clock">00:00:00</div>
+  <div class="rewind-caption">time is the lock and the key. opening&hellip;</div>
+</div>
+
+<script>
+const localTimeEl = document.getElementById('local-time');
+const localZoneEl = document.getElementById('local-zone');
+const melbTimeEl = document.getElementById('melb-time');
+const driftEl = document.getElementById('drift');
+const codeInput = document.getElementById('code');
+const submitBtn = document.getElementById('submit');
+
+const userZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+localZoneEl.textContent = userZone;
+
+const isMelb = userZone === 'Australia/Melbourne' || userZone === 'Australia/Sydney' || userZone === 'Australia/Hobart';
+
+if (!isMelb) {
+  driftEl.textContent = `your zone (${userZone}) is not our zone. transcribe the Melbourne clock anyway.`;
+  driftEl.classList.add('alert');
+}
+
+function fmt(d, tz) {
+  const parts = new Intl.DateTimeFormat('en-AU', {
+    timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+  }).formatToParts(d);
+  const get = t => parts.find(p => p.type === t).value;
+  return `${get('hour')}:${get('minute')}:${get('second')}`;
+}
+
+let tickTimer = null;
+function tick() {
+  const now = new Date();
+  localTimeEl.textContent = fmt(now, userZone);
+  melbTimeEl.textContent = fmt(now, 'Australia/Melbourne');
+}
+tick();
+tickTimer = setInterval(tick, 1000);
+
+codeInput.addEventListener('input', () => {
+  codeInput.value = codeInput.value.replace(/\D/g, '').slice(0, 6);
+  submitBtn.disabled = codeInput.value.length !== 6;
+});
+
+function runRewindThenGo() {
+  clearInterval(tickTimer);
+  const overlay = document.getElementById('rewind');
+  const rewindEl = document.getElementById('rewind-clock');
+  overlay.classList.add('show');
+
+  let t = new Date();
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function render() {
+    rewindEl.textContent = `${pad(t.getHours())}:${pad(t.getMinutes())}:${pad(t.getSeconds())}`;
+  }
+  render();
+
+  const totalMs = 3000;
+  const stepMs = 50;
+  const stepBack = 6;
+  let elapsed = 0;
+  const rewindTimer = setInterval(() => {
+    t = new Date(t.getTime() - stepBack * 1000);
+    render();
+    elapsed += stepMs;
+    if (elapsed >= totalMs) {
+      clearInterval(rewindTimer);
+      window.location.href = '/journal/';
+    }
+  }, stepMs);
+}
+
+async function attempt() {
+  if (codeInput.value.length !== 6) return;
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Listening';
+  try {
+    const res = await fetch('/api/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: codeInput.value })
+    });
+    if (res.ok) {
+      submitBtn.textContent = 'Welcome';
+      runRewindThenGo();
+    } else {
+      window.location.href = '/denied.html';
+    }
+  } catch (e) {
+    window.location.href = '/denied.html';
+  }
+}
+
+submitBtn.addEventListener('click', attempt);
+codeInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && codeInput.value.length === 6) attempt();
+});
+
+const themeToggle = document.getElementById('theme-toggle');
+const themeIcon = document.getElementById('theme-icon');
+const themeLabel = document.getElementById('theme-label');
+
+const icons = {
+  auto: '\u25D0',
+  system: '\u25A3',
+  light: '\u2600',
+  dark: '\u263E'
+};
+
+function updateThemeUI() {
+  const mode = window.JournalTheme.getMode();
+  themeIcon.innerHTML = icons[mode] || icons.auto;
+  themeLabel.textContent = mode;
+}
+updateThemeUI();
+
+themeToggle.addEventListener('click', () => {
+  window.JournalTheme.cycle();
+  updateThemeUI();
+});
+</script>
+</body>
+</html>
