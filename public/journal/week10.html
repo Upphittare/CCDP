@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 10 &mdash; Liminal spaces</title>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --text: #f0e8d8;
+  --dim: #b0a89a;
+  --accent: #e8b85a;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  background: #0a0808;
+  color: var(--text);
+  font-family: 'Cormorant Garamond', serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.slideshow {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 2s ease;
+}
+.slide.active { opacity: 1; }
+
+.slideshow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.4) 35%, rgba(0,0,0,0.75) 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.flicker {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(ellipse at center top, rgba(255, 240, 200, 0.05) 0%, transparent 50%);
+  animation: lightFlicker 11s steps(2) infinite;
+  pointer-events: none;
+}
+
+@keyframes lightFlicker {
+  0%, 92%, 100% { opacity: 1; }
+  93% { opacity: 0.3; }
+  94% { opacity: 1; }
+  96% { opacity: 0.5; }
+  97% { opacity: 1; }
+}
+
+.page {
+  position: relative;
+  z-index: 3;
+  padding: 3rem clamp(1.5rem, 6vw, 5rem) 5rem;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.weekstamp {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+}
+
+.title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-style: italic;
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  line-height: 0.95;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.9);
+}
+
+.subtitle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  margin-bottom: 3.5rem;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+}
+
+.body-text {
+  font-size: 1.18rem;
+  line-height: 1.85;
+  color: var(--text);
+  background: rgba(10, 8, 8, 0.5);
+  padding: 2.2rem;
+  border: 1px solid rgba(232, 184, 90, 0.2);
+  backdrop-filter: blur(3px);
+}
+.body-text p { margin-bottom: 1.8rem; }
+.body-text em { font-style: italic; color: var(--accent); }
+
+.cross-link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--accent);
+  font-style: normal;
+  letter-spacing: 0.05em;
+  background: transparent;
+  border: none;
+  border-bottom: 1px dotted var(--accent);
+  cursor: pointer;
+  padding: 0;
+}
+.cross-link:hover { opacity: 0.7; }
+</style>
+</head>
+<body>
+<div class="slideshow" id="slideshow"></div>
+<div class="flicker"></div>
+
+<article class="page">
+  <div class="weekstamp">Week 10 &middot; group presentations</div>
+  <h1 class="title">Liminal spaces &amp; let's play</h1>
+  <p class="subtitle">on form, content, and the void between rooms</p>
+  <div class="body-text">
+    <p>Week 10 was the culmination of our semester: the group presentations. For our project, we chose to explore the uncanny phenomenon of <em>&lsquo;liminal spaces&rsquo;</em> &mdash; those unsettling, empty transitional spaces that trigger nostalgia and existential dread, specifically linking them to childhood shadows and trauma. Rather than delivering a dry, academic slide deck, we decided to construct a playable liminal environment and present our research through a <em>&lsquo;YouTube Let's Play&rsquo;</em> video format.</p>
+
+    <p>Initially, our group discussed delivering a traditional live presentation. But applying the <em>adaptive intelligence</em> we discussed in <button class="cross-link" onclick="window.parent.postMessage({type:'goto-week',week:1},'*')">Week 1</button>, we realised a live speech would shatter the eerie, atmospheric tension essential to liminal spaces. By producing a pre-recorded, curated video, we could precisely control the pacing, sound design, and visual impact. Presenting our game as a YouTube-style let's-play allowed us to critique modern internet aesthetics using the very media format that birthed them. It was a perfect integration of form and content, and the live presentation time went by incredibly fast.</p>
+
+    <p>Sitting in the audience, both during our class and when observing the remaining groups on Monday of Week 11, I was deeply impressed by the diverse visual styles of our peers. During our session, one group particularly caught my attention with their exploration of <em>Frutiger Aero</em> &mdash; that early-to-mid 2000s design aesthetic characterised by glossy textures, tech-optimism, and green-blue eco-futurism. It was fascinating to see how they captured tech-nostalgia, contrasting beautifully with our eerie, liminal exploration of the past. Later, on Monday of Week 11, two other presentations stood out: one analysing the virtual architecture and social spaces within Roblox, and another dissecting the transmedia and visual language of Japanese Anime.</p>
+
+    <p>Looking back over these weeks of preparation and peer review, I am faced with the ultimate question: has this <em>&lsquo;unrestricted, mixed-bag&rsquo;</em> style of artistic and technological education genuinely reshaped my thinking, or is it just creative self-indulgence?</p>
+
+    <p>To be honest, I choose not to answer that yet.</p>
+
+    <p>It is too early to tell. I don't believe in tidy, forced academic conclusions. The value of this class shouldn't be summarised in a neat paragraph. Just like the unpredictable systems we studied in <button class="cross-link" onclick="window.parent.postMessage({type:'goto-week',week:8},'*')">Week 8</button>, the true impact of these ideas will only reveal itself in the future. For now, the presentation is done, and we take it one step at a time.</p>
+  </div>
+</article>
+
+<script>
+const images = [
+  '/assets/liminal/01.jpg', '/assets/liminal/02.jpg', '/assets/liminal/03.jpg',
+  '/assets/liminal/04.jpg', '/assets/liminal/05.jpg', '/assets/liminal/06.jpg',
+  '/assets/liminal/07.jpg', '/assets/liminal/08.jpg', '/assets/liminal/09.jpg',
+  '/assets/liminal/10.png', '/assets/liminal/11.jpeg', '/assets/liminal/12.jpg',
+  '/assets/liminal/13.jpg', '/assets/liminal/14.jpg', '/assets/liminal/15.jpg'
+];
+
+const slideshow = document.getElementById('slideshow');
+images.forEach((src) => {
+  const slide = document.createElement('div');
+  slide.className = 'slide';
+  slide.style.backgroundImage = `url('${src}')`;
+  slideshow.appendChild(slide);
+});
+
+const slides = document.querySelectorAll('.slide');
+let current = 0;
+
+try {
+  window.parent.postMessage({ type: 'week10-request-slide' }, '*');
+} catch (e) {}
+
+window.addEventListener('message', (e) => {
+  if (e.data && e.data.type === 'week10-restore-slide' && typeof e.data.index === 'number') {
+    current = e.data.index % slides.length;
+    slides.forEach(s => s.classList.remove('active'));
+    slides[current].classList.add('active');
+  }
+});
+
+setTimeout(() => {
+  if (!document.querySelector('.slide.active')) {
+    slides[current].classList.add('active');
+  }
+}, 100);
+
+setInterval(() => {
+  slides[current].classList.remove('active');
+  current = (current + 1) % slides.length;
+  slides[current].classList.add('active');
+  try {
+    window.parent.postMessage({ type: 'week10-slide-changed', index: current }, '*');
+  } catch (e) {}
+}, 30000);
+</script>
+</body>
+</html>

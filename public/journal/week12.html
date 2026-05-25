@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 12 &mdash; Followers, fans, leftovers</title>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #14110d;
+  --bg2: #1f1a14;
+  --accent: #e8a755;
+  --warm: #d96d4a;
+  --text: #f0e8d4;
+  --dim: #8a7e6a;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Cormorant Garamond', serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 100%, var(--bg2) 0%, var(--bg) 70%);
+  z-index: 0;
+}
+
+.echoes {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.echo {
+  position: absolute;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: var(--accent);
+  opacity: 0;
+  white-space: nowrap;
+  animation: drift 24s linear infinite;
+  font-weight: 400;
+}
+
+@keyframes drift {
+  0% { opacity: 0; transform: translateY(20px); }
+  10% { opacity: 0.4; }
+  90% { opacity: 0.3; }
+  100% { opacity: 0; transform: translateY(-100vh); }
+}
+
+.pizza {
+  position: fixed;
+  bottom: 8vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: clamp(120px, 18vw, 180px);
+  height: clamp(120px, 18vw, 180px);
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.55;
+  animation: pizzaFloat 6s ease-in-out infinite;
+}
+.pizza svg { width: 100%; height: 100%; }
+
+@keyframes pizzaFloat {
+  0%, 100% { transform: translateX(-50%) translateY(0) rotate(-3deg); }
+  50% { transform: translateX(-50%) translateY(-12px) rotate(3deg); }
+}
+
+.steam {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  opacity: 0.4;
+  animation: steam 3s ease-in-out infinite;
+}
+.steam.s2 { animation-delay: -1s; }
+.steam.s3 { animation-delay: -2s; }
+
+@keyframes steam {
+  0%, 100% { opacity: 0; transform: translateY(0); }
+  50% { opacity: 0.5; transform: translateY(-8px); }
+}
+
+.page {
+  position: relative;
+  z-index: 2;
+  padding: 3rem clamp(1.5rem, 6vw, 5rem) 28vh;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.weekstamp {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-style: italic;
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  line-height: 0.95;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  margin-bottom: 3.5rem;
+}
+
+.body-text {
+  font-size: 1.18rem;
+  line-height: 1.85;
+  color: var(--text);
+}
+.body-text p { margin-bottom: 1.8rem; }
+.body-text em { font-style: italic; color: var(--accent); }
+
+.cross-link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--accent);
+  font-style: normal;
+  letter-spacing: 0.05em;
+  background: transparent;
+  border: none;
+  border-bottom: 1px dotted var(--accent);
+  cursor: pointer;
+  padding: 0;
+}
+.cross-link:hover { opacity: 0.7; }
+
+.closing {
+  font-family: 'Caveat', cursive;
+  font-size: 1.5rem;
+  color: var(--warm);
+  text-align: center;
+  margin-top: 3rem;
+  font-style: italic;
+}
+</style>
+</head>
+<body>
+<div class="atmosphere"></div>
+<div class="echoes" id="echoes"></div>
+
+<div class="pizza">
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <path class="steam" d="M 80 30 Q 75 20 80 10 Q 85 0 80 -10"/>
+  <path class="steam s2" d="M 100 30 Q 95 20 100 10 Q 105 0 100 -10"/>
+  <path class="steam s3" d="M 120 30 Q 115 20 120 10 Q 125 0 120 -10"/>
+
+  <path d="M 100 60 L 30 170 L 170 170 Z" fill="#e8a755" opacity="0.85"/>
+  <path d="M 100 60 L 30 170 L 170 170 Z" fill="none" stroke="#a36a2c" stroke-width="2"/>
+  <path d="M 100 60 L 50 155 L 150 155 Z" fill="#d96d4a" opacity="0.6"/>
+
+  <circle cx="80" cy="120" r="7" fill="#a83838"/>
+  <circle cx="115" cy="115" r="6" fill="#a83838"/>
+  <circle cx="95" cy="140" r="6" fill="#a83838"/>
+  <circle cx="130" cy="145" r="7" fill="#a83838"/>
+  <circle cx="70" cy="145" r="5" fill="#a83838"/>
+
+  <circle cx="100" cy="100" r="3" fill="#f0e8d4" opacity="0.8"/>
+  <circle cx="120" cy="130" r="2.5" fill="#f0e8d4" opacity="0.8"/>
+  <circle cx="85" cy="155" r="3" fill="#f0e8d4" opacity="0.8"/>
+  <circle cx="140" cy="125" r="2.5" fill="#f0e8d4" opacity="0.8"/>
+</svg>
+</div>
+
+<article class="page">
+  <div class="weekstamp">Week 12 &middot; final lecture</div>
+  <h1 class="title">Followers, fans, and leftover pizza</h1>
+  <p class="subtitle">on leadership, Bandcamp, remix culture, and what we close out with</p>
+  <div class="body-text">
+
+    <p>The final lecture this semester opened with a critique of our modern obsession with leadership. We're constantly told that everyone has to <em>be a leader</em>, but the professor's point was that a movement is really created by the first few people brave enough to follow. That reframing stuck with me.</p>
+
+    <p>I see this a bit differently because I grew up in East Asian culture. The West pushes hard for individual leadership; East Asian cultures historically lean toward the group. Being too eager to lead, or showing off your personal value too much, often gets read as arrogance, and it can quietly make others not want to include you. The downside is that teamwork often goes to extremes &mdash; either nobody steps up and the whole thing stalls in awkward silence, or one person who really wants the spotlight grabs all the power and shuts everyone else up. It's gotten better in recent years, but the obsession with being &lsquo;the boss&rsquo; is a flawed default basically everywhere.</p>
+
+    <p>Then the lecture moved on to &lsquo;hybrid technology&rsquo; and the professor's critique of big platforms like Spotify that control everything top-down. His push was for open-source mentalities and direct-to-fan models like Bandcamp. This fits perfectly with what I was already saying back in <button class="cross-link" onclick="window.parent.postMessage({type:'goto-week',week:3},'*')">Week 3</button> about AI &mdash; the real danger isn't the technology, it's <em>monopoly</em>. A lot of tech giants laugh at open-source creators in public while keeping their own algorithms locked in a vault.</p>
+
+    <p>The reason &lsquo;creator utopia&rsquo; never quite sticks is that creators don't actually own the means of production in the digital age. The big platforms own the distribution, the discoverability, the way you get paid. Creators are stuck inside someone else's algorithm, and most of the value they generate gets skimmed off by the platform. Direct-to-fan models like Bandcamp and Patreon are basically a slow, spontaneous rebellion against that. By connecting straight to the people who actually care about their work, creators claw back some of the value. So it isn't just a dream &mdash; it's a real survival strategy that works, at least for some.</p>
+
+    <p>At the end, we got to mashups, sampling, and remixing. I don't think you can call this stuff just a &lsquo;paradise of creativity&rsquo; or just &lsquo;meaningless algorithmic garbage&rsquo; &mdash; both takes are too clean. On the good side, remix culture breaks down the gatekeeping of giant culture companies and lets regular people actually participate in making and reshaping art. On the bad side, when it gets pulled into algorithm-capitalism, it churns out an endless stream of samey, hollow, attention-bait content that genuinely makes the internet worse.</p>
+
+    <p>The world isn't black and white, and it isn't a zero-sum game either. When we look at digital labour, remix culture, or the whole tangle of art-and-tech we've been working through all term &mdash; it asks for the same thing every week has been asking for: looking from multiple sides, checking the actual facts, and being honest about where you stand. That requires staying alert, keeping your thinking clear, and being willing to keep learning even after the semester ends.</p>
+
+    <p class="closing">though honestly, the one thing we can all probably agree on<br>is the pizza the professor promised at the end of class. &#127829;</p>
+
+  </div>
+</article>
+
+<script>
+const echoWords = [
+  'Arts / Sciences',
+  'the tip of the iceberg',
+  'Eiffel Tower moment',
+  'Distant Horizons',
+  'seeing is no longer believing',
+  'the body hears',
+  'form follows function',
+  'human suffering is desire',
+  'we are like ants',
+  'the wood wide web',
+  'super-abled',
+  'your time is not our time',
+  'Maya, the void',
+  'monopoly is the threat',
+  'a door that knows the hour'
+];
+
+const container = document.getElementById('echoes');
+
+function spawnEcho() {
+  const word = echoWords[Math.floor(Math.random() * echoWords.length)];
+  const el = document.createElement('div');
+  el.className = 'echo';
+  el.textContent = word;
+  el.style.left = (5 + Math.random() * 85) + '%';
+  el.style.top = '100%';
+  el.style.fontSize = (0.95 + Math.random() * 0.5) + 'rem';
+  el.style.animationDuration = (20 + Math.random() * 14) + 's';
+  container.appendChild(el);
+  setTimeout(() => el.remove(), 36000);
+}
+
+for (let i = 0; i < 4; i++) {
+  setTimeout(spawnEcho, i * 4000);
+}
+setInterval(spawnEcho, 4000);
+</script>
+</body>
+</html>
