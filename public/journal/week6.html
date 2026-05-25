@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 6 &mdash; The body hears</title>
+<script>(async function gate(){document.documentElement.style.visibility="hidden";try{const r=await fetch("/api/check",{credentials:"same-origin",cache:"no-store"});const d=await r.json();if(!d.valid){window.top.location.replace("/");return}document.documentElement.style.visibility="visible"}catch(e){window.top.location.replace("/")}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-deep: #0c0612;
+  --bg-mid: #1a0e2a;
+  --tone: #f5a6c7;
+  --tone-deep: #c14878;
+  --tone-soft: #6b4080;
+  --text: #f0e8f5;
+  --text-dim: #8a7a95;
+  --gold: #f4d35e;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  background: var(--bg-deep);
+  color: var(--text);
+  font-family: 'Cormorant Garamond', serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.field {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 50%, var(--bg-mid) 0%, var(--bg-deep) 70%);
+  z-index: 0;
+}
+
+.cymatics {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  border-radius: 50%;
+  border: 1px solid var(--tone);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  animation: pulse 8s ease-out infinite;
+}
+
+.ring:nth-child(1) { animation-delay: 0s; }
+.ring:nth-child(2) { animation-delay: 2s; }
+.ring:nth-child(3) { animation-delay: 4s; }
+.ring:nth-child(4) { animation-delay: 6s; }
+
+@keyframes pulse {
+  0% { width: 100px; height: 100px; opacity: 0.7; border-color: var(--tone); }
+  100% { width: 2400px; height: 2400px; opacity: 0; border-color: var(--tone-soft); }
+}
+
+.noise {
+  position: fixed;
+  inset: 0;
+  background-image:
+    repeating-radial-gradient(circle at 30% 30%, rgba(245, 166, 199, 0.04) 0, transparent 2px),
+    repeating-radial-gradient(circle at 70% 70%, rgba(244, 211, 94, 0.03) 0, transparent 3px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.page {
+  position: relative;
+  z-index: 2;
+  padding: 3rem clamp(1.5rem, 6vw, 5rem) 5rem;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.weekstamp {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--tone);
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-style: italic;
+  font-size: clamp(2.6rem, 5.5vw, 4.2rem);
+  line-height: 0.95;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin-bottom: 0.5rem;
+}
+
+.title .accent {
+  color: var(--tone);
+  font-weight: 400;
+}
+
+.subtitle {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  margin-bottom: 3.5rem;
+}
+
+.body-text {
+  font-size: 1.18rem;
+  line-height: 1.85;
+  color: var(--text);
+}
+
+.body-text p {
+  margin-bottom: 1.8rem;
+}
+
+.body-text em {
+  font-style: italic;
+  color: var(--tone);
+}
+
+.body-text strong {
+  font-weight: 400;
+  font-style: italic;
+  color: var(--gold);
+  letter-spacing: 0.03em;
+}
+
+.frequency {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 60px;
+  margin: 2.5rem 0;
+  padding: 0 0.5rem;
+}
+
+.freq-bar {
+  flex: 1;
+  background: linear-gradient(180deg, var(--tone), var(--tone-deep));
+  border-radius: 1px;
+  animation: equalise 1.4s ease-in-out infinite;
+}
+
+@keyframes equalise {
+  0%, 100% { height: 10%; }
+  50% { height: 100%; }
+}
+
+.callout {
+  position: relative;
+  margin: 3rem 0;
+  padding: 2.2rem 2rem;
+  background: linear-gradient(135deg, rgba(193, 72, 120, 0.08), rgba(244, 211, 94, 0.04));
+  border: 1px solid var(--tone-soft);
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.3rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.callout::before {
+  content: '~';
+  position: absolute;
+  top: -1rem; left: 2rem;
+  background: var(--bg-deep);
+  padding: 0 0.5rem;
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--tone);
+  font-size: 1.5rem;
+  font-style: normal;
+}
+
+.cross-link {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--gold);
+  font-style: normal;
+  letter-spacing: 0.05em;
+  background: transparent;
+  border: none;
+  border-bottom: 1px dotted var(--gold);
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.cross-link:hover { color: var(--tone); border-bottom-color: var(--tone); }
+
+</style>
+</head>
+<body>
+<div class="field"></div>
+<div class="cymatics">
+  <div class="ring"></div>
+  <div class="ring"></div>
+  <div class="ring"></div>
+  <div class="ring"></div>
+</div>
+<div class="noise"></div>
+
+<article class="page">
+
+  <div class="weekstamp">Week 06 &middot; 6 April &middot; sound</div>
+  <h1 class="title">The body <span class="accent">hears</span></h1>
+  <p class="subtitle">on cymatics, equal temperament, and the architecture of background noise</p>
+
+  <div class="frequency">
+    <div class="freq-bar" style="animation-delay: 0s"></div>
+    <div class="freq-bar" style="animation-delay: 0.1s"></div>
+    <div class="freq-bar" style="animation-delay: 0.2s"></div>
+    <div class="freq-bar" style="animation-delay: 0.05s"></div>
+    <div class="freq-bar" style="animation-delay: 0.15s"></div>
+    <div class="freq-bar" style="animation-delay: 0.25s"></div>
+    <div class="freq-bar" style="animation-delay: 0.3s"></div>
+    <div class="freq-bar" style="animation-delay: 0.18s"></div>
+    <div class="freq-bar" style="animation-delay: 0.08s"></div>
+    <div class="freq-bar" style="animation-delay: 0.22s"></div>
+    <div class="freq-bar" style="animation-delay: 0.12s"></div>
+    <div class="freq-bar" style="animation-delay: 0.28s"></div>
+    <div class="freq-bar" style="animation-delay: 0.07s"></div>
+    <div class="freq-bar" style="animation-delay: 0.17s"></div>
+    <div class="freq-bar" style="animation-delay: 0.27s"></div>
+    <div class="freq-bar" style="animation-delay: 0.14s"></div>
+    <div class="freq-bar" style="animation-delay: 0.21s"></div>
+    <div class="freq-bar" style="animation-delay: 0.31s"></div>
+    <div class="freq-bar" style="animation-delay: 0.09s"></div>
+    <div class="freq-bar" style="animation-delay: 0.19s"></div>
+  </div>
+
+  <div class="body-text">
+    <p>
+      This week's lecture pretty much shattered everything I thought I knew about sound and music. The professor provocatively claimed that <em>the ears are not for hearing</em>, and that almost all traditional Western music theory is built on a manufactured, mathematical compromise rather than actual acoustic phenomena.
+    </p>
+
+    <p>
+      What's funny is this connected to a thought I'd had when I was much younger. I used to wonder if we don't just hear with our ears, but with our <em>whole bodies</em>. The standard explanation for how we figure out where a sound is coming from is the time delay between sound hitting the left and right ears. But I was thinking &mdash; what if it's actually our skin feeling different intensities of vibration? If someone's talking right in front of me, the front of my body should physically absorb more vibration than my back, which would help me locate the source. The professor's explanation that sound is fundamentally a physical field of frequency and amplitude &mdash; and those mesmerising <strong>Cymatics</strong> videos where sound waves shape sand and water into complex geometric patterns &mdash; kind of validated my childhood intuition. Sound really is a tangible, physical force.
+    </p>
+
+    <div class="callout">
+      The thing about 12-tone equal temperament &mdash; the system we hear as &lsquo;harmonious&rsquo; &mdash; actually being a historically forced, artificial standard made me rethink how much of our reality is manufactured.
+    </div>
+
+    <p>
+      Honestly, almost all our societal standards (habits, aesthetics, ideologies, even our concept of time) are human constructs. It's kind of the same thing I was saying back in <button class="cross-link" onclick="window.parent.postMessage({type:'goto-week',week:1},'*')">Week 1</button> about the arts/sciences split &mdash; somebody draws an artificial line, then a few generations later everyone forgets the line was drawn and treats it as nature. If you stripped away these fabricated systems, we'd basically just be animals running on genetic instincts. We perceive piano music as &lsquo;natural&rsquo; simply because our brains have been neurologically rewired by cultural exposure to accept it as normal.
+    </p>
+
+    <p>
+      This physical and psychological power of sound is also why it's so important in design and media. Sound is one of the rare elements that can completely change your emotions and how you perceive a space <em>without you even consciously noticing</em>. Like how a creepy BGM in a horror game makes you physically tense &mdash; even when your eyes are entirely on the visuals &mdash; sound works as this kind of invisible architecture. We usually ignore background noise, but it's exactly what's shaping our experience from the shadows.
+    </p>
+  </div>
+</article>
+</body>
+</html>

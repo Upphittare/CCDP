@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 3 &mdash; Eiffel, Minecraft, machines</title>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #1a1410;
+  --bg2: #2a1f15;
+  --accent: #e8a755;
+  --text: #ede0c8;
+  --dim: #9a8870;
+  --fog: rgba(232, 220, 200, 0.92);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Cormorant Garamond', serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.sky {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 0%, #3a2d20 0%, var(--bg2) 35%, var(--bg) 70%);
+  z-index: 0;
+}
+
+.tower-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.tower {
+  width: clamp(280px, 50vw, 520px);
+  height: 95vh;
+  opacity: 0.6;
+}
+
+.tower svg { width: 100%; height: 100%; }
+
+.fog {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 60%, rgba(232, 220, 200, 0.4) 0%, rgba(232, 220, 200, 0.85) 30%, rgba(232, 220, 200, 0.98) 60%);
+  opacity: 1;
+  transition: opacity 0.05s linear;
+}
+
+.fog::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(ellipse 200px 100px at 20% 30%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(ellipse 250px 120px at 70% 50%, rgba(255,255,255,0.5), transparent),
+    radial-gradient(ellipse 180px 90px at 40% 70%, rgba(255,255,255,0.4), transparent),
+    radial-gradient(ellipse 220px 110px at 85% 25%, rgba(255,255,255,0.5), transparent);
+  animation: fogDrift 40s linear infinite;
+}
+
+@keyframes fogDrift {
+  from { transform: translateX(0); }
+  to { transform: translateX(-200px); }
+}
+
+.fog-hint {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #6a5848;
+  z-index: 2;
+  text-align: center;
+  pointer-events: none;
+  transition: opacity 0.5s;
+}
+
+.fog-hint .big {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 2rem;
+  letter-spacing: 0;
+  text-transform: none;
+  margin-bottom: 0.8rem;
+  color: #5a4838;
+}
+
+.fog-hint.gone { opacity: 0; }
+
+.grid-overlay {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(232, 167, 85, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232, 167, 85, 0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+  z-index: 0;
+}
+
+.page {
+  position: relative;
+  z-index: 3;
+  padding: 30vh clamp(1.5rem, 6vw, 5rem) 5rem;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.weekstamp {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-style: italic;
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  line-height: 0.95;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  margin-bottom: 3.5rem;
+}
+
+.body-text {
+  font-size: 1.18rem;
+  line-height: 1.85;
+  color: var(--text);
+}
+.body-text p { margin-bottom: 1.8rem; }
+.body-text em { font-style: italic; color: var(--accent); }
+
+.cross-link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--accent);
+  font-style: normal;
+  letter-spacing: 0.05em;
+  background: transparent;
+  border: none;
+  border-bottom: 1px dotted var(--accent);
+  cursor: pointer;
+  padding: 0;
+}
+.cross-link:hover { opacity: 0.7; }
+</style>
+</head>
+<body>
+<div class="sky"></div>
+<div class="grid-overlay"></div>
+<div class="tower-stage">
+  <div class="tower">
+    <svg viewBox="0 0 200 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYEnd meet">
+      <g stroke="#e8a755" stroke-width="1.2" fill="none" opacity="0.85">
+        <line x1="100" y1="20" x2="100" y2="60"/>
+        <circle cx="100" cy="15" r="3" fill="#e8a755"/>
+        <line x1="85" y1="60" x2="115" y2="60"/>
+        <line x1="80" y1="80" x2="120" y2="80"/>
+        <line x1="80" y1="60" x2="80" y2="160"/>
+        <line x1="120" y1="60" x2="120" y2="160"/>
+        <line x1="85" y1="80" x2="115" y2="80"/>
+        <line x1="80" y1="160" x2="120" y2="160"/>
+        <line x1="80" y1="80" x2="120" y2="160"/>
+        <line x1="120" y1="80" x2="80" y2="160"/>
+        <line x1="70" y1="160" x2="130" y2="160"/>
+        <line x1="65" y1="180" x2="135" y2="180"/>
+        <line x1="65" y1="160" x2="55" y2="320"/>
+        <line x1="135" y1="160" x2="145" y2="320"/>
+        <line x1="70" y1="180" x2="130" y2="180"/>
+        <line x1="55" y1="320" x2="145" y2="320"/>
+        <line x1="60" y1="240" x2="140" y2="240"/>
+        <line x1="65" y1="180" x2="145" y2="320"/>
+        <line x1="135" y1="180" x2="55" y2="320"/>
+        <line x1="65" y1="180" x2="65" y2="240"/>
+        <line x1="135" y1="180" x2="135" y2="240"/>
+        <line x1="40" y1="320" x2="160" y2="320"/>
+        <line x1="30" y1="340" x2="170" y2="340"/>
+        <line x1="40" y1="320" x2="10" y2="600"/>
+        <line x1="160" y1="320" x2="190" y2="600"/>
+        <line x1="30" y1="340" x2="170" y2="340"/>
+        <line x1="20" y1="460" x2="180" y2="460"/>
+        <line x1="10" y1="600" x2="190" y2="600"/>
+        <line x1="40" y1="320" x2="180" y2="460"/>
+        <line x1="160" y1="320" x2="20" y2="460"/>
+        <line x1="20" y1="460" x2="190" y2="600"/>
+        <line x1="180" y1="460" x2="10" y2="600"/>
+        <line x1="40" y1="320" x2="40" y2="460"/>
+        <line x1="160" y1="320" x2="160" y2="460"/>
+        <line x1="20" y1="460" x2="20" y2="600"/>
+        <line x1="180" y1="460" x2="180" y2="600"/>
+        <path d="M 25 460 Q 100 420 175 460" stroke-width="1.5"/>
+        <path d="M 35 320 Q 100 290 165 320" stroke-width="1.2"/>
+      </g>
+    </svg>
+  </div>
+</div>
+<div class="fog" id="fog"></div>
+<div class="fog-hint" id="fog-hint">
+  <span class="big">scroll down &darr;</span>
+  the fog lifts as you climb
+</div>
+
+<article class="page">
+  <div class="weekstamp">Week 03 &middot; 16 March</div>
+  <h1 class="title">Eiffel, Minecraft, machines</h1>
+  <p class="subtitle">on macro-perspective and the cult of new tech</p>
+  <div class="body-text">
+    <p>The professor's discussion about how the Eiffel Tower gave humanity an unprecedented macro-perspective &mdash; basically shifting human consciousness &mdash; reminded me of a digital experience I had that hit pretty deep. I had installed the &lsquo;Distant Horizons&rsquo; mod in Minecraft. The game normally caps render distance at 32 chunks, with everything past that hidden in fog. But this mod cranked my view up to 512 chunks, even 4096. Seeing that sprawling, pixelated landscape from a god-like perspective for the first time genuinely shocked me. I realised that even a world made of simple blocks could be breathtakingly beautiful. It was kind of my own <em>Eiffel Tower moment</em>, just in a virtual space.</p>
+
+    <p>The lecture also got into how early twentieth-century society basically worshipped technology &mdash; like literally putting an aeroplane in a cathedral. Are we still treating tech as some kind of all-powerful deity today? Pretty much, yeah. I think this <em>tech-worship</em> comes from intellectual laziness more than anything. A lot of people just don't want to engage in complex, objective thinking. It's easier to follow the herd and worship whatever shiny new thing comes out, without actually seeing the full picture. The world is rarely black and white, and what tech companies show us is usually just the tip of the iceberg. To really understand something you have to keep learning and actually check things &mdash; kind of like how the Cubists shattered single-point perspective to see all sides of an object at once.</p>
+
+    <p>This kind of mirrors what's happening with AI right now &mdash; almost the same split that happened between Neoclassicists and radical Futurists. To me, AI is basically a tool. It'll replace some jobs, sure, but it'll also free up a huge amount of human productivity. Just rejecting it outright is fear of the unknown. What I'm actually worried about isn't AI replacing humans &mdash; it's <em>accessibility</em>. For AI to really benefit society, it has to function as public infrastructure (something like the low-cost, accessible model of DeepSeek), not stay as some highly-priced monopoly controlled by a handful of Silicon Valley elites at OpenAI. The real threat in the twenty-first century probably isn't AI itself. It's monopoly.</p>
+  </div>
+</article>
+
+<script>
+const fog = document.getElementById('fog');
+const hint = document.getElementById('fog-hint');
+function update() {
+  const sy = window.scrollY;
+  const max = window.innerHeight * 0.7;
+  const t = Math.min(1, sy / max);
+  fog.style.opacity = (1 - t).toFixed(3);
+  if (t > 0.05) hint.classList.add('gone');
+  else hint.classList.remove('gone');
+}
+window.addEventListener('scroll', update, { passive: true });
+update();
+</script>
+</body>
+</html>

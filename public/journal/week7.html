@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 7 &mdash; Bauhaus</title>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f0ebe1;
+  --bg2: #e0d8c8;
+  --accent: #d8423c;
+  --blue: #2c5f9e;
+  --yellow: #f0c020;
+  --text: #1a1815;
+  --dim: #5a5048;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Cormorant Garamond', serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at 30% 20%, var(--bg2) 0%, var(--bg) 60%);
+  z-index: 0;
+}
+
+.crowd {
+  position: fixed;
+  bottom: 0;
+  left: 0; right: 0;
+  height: 32vh;
+  z-index: 0;
+  pointer-events: none;
+}
+.crowd svg { width: 100%; height: 100%; display: block; }
+
+.bubble {
+  position: fixed;
+  background: white;
+  border: 2px solid var(--text);
+  border-radius: 20px;
+  padding: 0.6rem 1rem;
+  font-family: 'Caveat', cursive;
+  font-size: 0.95rem;
+  color: var(--text);
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.5s, transform 0.5s;
+  max-width: 200px;
+  pointer-events: none;
+  box-shadow: 3px 3px 0 var(--text);
+  transform: translateY(0);
+}
+.bubble.show {
+  opacity: 1;
+  transform: translateY(-8px);
+}
+.bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 30%;
+  width: 14px;
+  height: 14px;
+  background: white;
+  border-right: 2px solid var(--text);
+  border-bottom: 2px solid var(--text);
+  transform: rotate(45deg);
+}
+
+.page {
+  position: relative;
+  z-index: 2;
+  padding: 3rem clamp(1.5rem, 6vw, 5rem) 36vh;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.weekstamp {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-style: italic;
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  line-height: 0.95;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  margin-bottom: 3.5rem;
+}
+
+.body-text {
+  font-size: 1.18rem;
+  line-height: 1.85;
+  color: var(--text);
+}
+.body-text p { margin-bottom: 1.8rem; }
+.body-text em { font-style: italic; color: var(--accent); }
+
+.cross-link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--accent);
+  font-style: normal;
+  letter-spacing: 0.05em;
+  background: transparent;
+  border: none;
+  border-bottom: 1px dotted var(--accent);
+  cursor: pointer;
+  padding: 0;
+}
+.cross-link:hover { opacity: 0.7; }
+</style>
+</head>
+<body>
+<div class="atmosphere"></div>
+
+<div class="crowd">
+  <svg id="crowd-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <g id="people-group"></g>
+  </svg>
+</div>
+
+<article class="page">
+  <div class="weekstamp">Week 07 &middot; 20 April</div>
+  <h1 class="title">Bauhaus &amp; the utopia myth</h1>
+  <p class="subtitle">on form, function, and what design cannot fix</p>
+  <div class="body-text">
+    <p>This week's focus on Bauhaus revealed where a lot of our modern visual and physical landscape actually comes from. The core philosophy of Bauhaus &mdash; <em>form follows function</em> &mdash; stripped away all that excessive, romantic nineteenth-century ornamentation in favour of utilitarian, mass-produced design. Looking at my own preferences now, I find I actually appreciate both extremes. They're not really contradictory, they just do different jobs. Complex, intricate designs give you emotional joy and visual interest, while minimalist Bauhaus-inspired stuff (modern smartphones, IKEA furniture) gives you pure efficiency.</p>
+
+    <p>What I found most interesting about Bauhaus is that its founder, Walter Gropius, deliberately hired painters and sculptors to teach architecture &mdash; fully embracing cross-disciplinary collaboration. Which is kind of wild because that's exactly what I was complaining we don't have anymore in <button class="cross-link" onclick="window.parent.postMessage({type:'goto-week',week:1},'*')">Week 1</button> &mdash; Gropius did this in 1919, and a hundred years later we're still treating it as some radical experimental thing. Tech companies still do this today, sort of.</p>
+
+    <p>But I'm a little cynical about how <em>&lsquo;art&rsquo;</em> gets used in the commercial world. It's a double-edged sword. On the good side, it elevates human experience. But the moment a tech company slaps an &lsquo;art&rsquo; label on a product, society artificially inflates its value. &lsquo;Art&rsquo; often just becomes a marketing tool to justify ridiculous markups. (Which, if you think about it, is the same labelling-trick problem from <button class="cross-link" onclick="window.parent.postMessage({type:'goto-week',week:1},'*')">Week 1</button> just running in the opposite direction &mdash; instead of a label being used to limit someone, it's being used to inflate something.)</p>
+
+    <p>The most poignant thing about Bauhaus though was its romantic, kind of naive utopian belief &mdash; that mass-producing cheap, functional kitchens and houses would solve societal inequality and make the world a better place. Did industrialisation and accessible design actually reduce human suffering in the twenty-first century? Yes and no. We have to be honest that industrialisation brought huge benefits &mdash; it let regular people afford things that used to be only for the rich.</p>
+
+    <p>But human worries didn't disappear, our desires just expanded. Humans are basically insatiable. When we're born into a society with material wealth already there, we take it for granted. Once basic material needs are covered by functional design, we immediately start chasing higher psychological and spiritual stuff. Technology and design can improve our living standards, but they can't really solve the root of human conflict, because honestly, <em>human suffering is a byproduct of human desire</em>.</p>
+  </div>
+</article>
+
+<script>
+const desires = [
+  'a bigger house', 'fewer notifications', 'someone to listen',
+  'one good night of sleep', 'to be seen', 'a new phone',
+  'silence', 'meaning', 'a holiday', 'to be left alone',
+  'recognition', 'to feel young again', 'love', 'a Tesla',
+  'time', 'to start over', 'a Michelin meal', 'to disappear',
+  'fame', 'to be remembered'
+];
+
+const colors = ['#d8423c', '#2c5f9e', '#f0c020', '#1a1815', '#4a8a5a'];
+const crowdSvg = document.getElementById('crowd-svg');
+const peopleGroup = document.getElementById('people-group');
+const crowdContainer = document.querySelector('.crowd');
+
+let people = [];
+
+function layoutPeople() {
+  peopleGroup.innerHTML = '';
+  people = [];
+
+  const containerWidth = crowdContainer.offsetWidth;
+  const containerHeight = crowdContainer.offsetHeight;
+  const svgHeight = 400;
+  const svgWidth = (containerWidth / containerHeight) * svgHeight;
+
+  crowdSvg.setAttribute('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
+
+  const spacing = Math.max(60, Math.min(90, svgWidth / 18));
+  const count = Math.floor(svgWidth / spacing);
+  const start = (svgWidth - (count - 1) * spacing) / 2;
+
+  for (let i = 0; i < count; i++) {
+    const x = start + i * spacing + (Math.random() * 16 - 8);
+    const y = 280 + Math.random() * 30;
+    const c = colors[i % colors.length];
+
+    const ns = 'http://www.w3.org/2000/svg';
+    const body = document.createElementNS(ns, 'path');
+    body.setAttribute('d', `M ${x - 22} ${y + 90} Q ${x - 22} ${y + 20} ${x} ${y + 14} Q ${x + 22} ${y + 20} ${x + 22} ${y + 90} Z`);
+    body.setAttribute('fill', c);
+    body.setAttribute('opacity', '0.7');
+    peopleGroup.appendChild(body);
+
+    const head = document.createElementNS(ns, 'circle');
+    head.setAttribute('cx', x);
+    head.setAttribute('cy', y);
+    head.setAttribute('r', 14);
+    head.setAttribute('fill', c);
+    head.setAttribute('opacity', '0.85');
+    peopleGroup.appendChild(head);
+
+    people.push({ x, y, svgWidth, svgHeight });
+  }
+}
+
+function showRandomBubble() {
+  if (people.length === 0) return;
+
+  const existing = document.querySelectorAll('.bubble');
+  if (existing.length >= 4) {
+    const oldest = existing[0];
+    oldest.classList.remove('show');
+    setTimeout(() => oldest.remove(), 600);
+  }
+
+  const p = people[Math.floor(Math.random() * people.length)];
+  const desire = desires[Math.floor(Math.random() * desires.length)];
+
+  const rect = crowdContainer.getBoundingClientRect();
+  const sx = rect.width / p.svgWidth;
+  const sy = rect.height / p.svgHeight;
+  const screenX = rect.left + p.x * sx;
+  const screenY = rect.top + (p.y - 30) * sy;
+
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.textContent = desire;
+  bubble.style.left = (screenX - 60) + 'px';
+  bubble.style.top = (screenY - 70) + 'px';
+  document.body.appendChild(bubble);
+
+  requestAnimationFrame(() => bubble.classList.add('show'));
+
+  setTimeout(() => {
+    bubble.classList.remove('show');
+    setTimeout(() => bubble.remove(), 600);
+  }, 3500);
+}
+
+window.addEventListener('load', () => {
+  layoutPeople();
+  setTimeout(showRandomBubble, 800);
+  setInterval(showRandomBubble, 2200);
+});
+
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    document.querySelectorAll('.bubble').forEach(b => b.remove());
+    layoutPeople();
+  }, 200);
+});
+</script>
+</body>
+</html>

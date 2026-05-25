@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekly Journal</title>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<script>
+(async function gate() {
+  document.documentElement.style.visibility = 'hidden';
+  try {
+    const res = await fetch('/api/check', { credentials: 'same-origin', cache: 'no-store' });
+    const data = await res.json();
+    if (!data.valid) { window.location.replace('/'); return; }
+    document.documentElement.style.visibility = 'visible';
+  } catch (e) { window.location.replace('/'); }
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,400&family=Space+Mono:wght@400;700&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #e8e0d0;
+  --ink-dim: #6b6557;
+  --ink-soft: #9a9080;
+  --paper: #0e0d0b;
+  --paper-soft: #16140f;
+  --accent: #d4a373;
+  --line: rgba(212, 163, 115, 0.18);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Fraunces', serif;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  height: 100vh;
+}
+
+.aside {
+  background: var(--paper-soft);
+  border-right: 1px solid var(--line);
+  padding: 2rem 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.brand {
+  padding: 0 1.75rem 2rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.brand-name {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-size: 1.6rem;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.brand-name em {
+  font-style: italic;
+  color: var(--accent);
+  font-weight: 400;
+}
+
+.weeks {
+  flex: 1;
+  padding: 1.25rem 0;
+  list-style: none;
+}
+
+.weeks li button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-left: 2px solid transparent;
+  padding: 0.85rem 1.75rem;
+  text-align: left;
+  cursor: pointer;
+  font-family: 'Fraunces', serif;
+  color: var(--ink-soft);
+  display: grid;
+  grid-template-columns: 2.4rem 1fr;
+  gap: 0.6rem;
+  align-items: baseline;
+  transition: all 0.25s ease;
+}
+
+.weeks li button:hover {
+  background: rgba(212, 163, 115, 0.04);
+  color: var(--ink);
+}
+
+.weeks li button.active {
+  border-left-color: var(--accent);
+  background: rgba(212, 163, 115, 0.06);
+  color: var(--ink);
+}
+
+.weeks li button .num {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--ink-dim);
+}
+
+.weeks li button.active .num { color: var(--accent); }
+
+.weeks li button .ttl {
+  font-size: 0.92rem;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.weeks li button[disabled] {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.aside-foot {
+  padding: 1.25rem 1.75rem 0;
+  border-top: 1px solid var(--line);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.aside-foot .now {
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.main {
+  position: relative;
+  overflow: hidden;
+}
+
+#frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: var(--paper);
+  display: block;
+}
+
+.menu-toggle {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 50;
+  width: 44px;
+  height: 44px;
+  background: var(--paper-soft);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0;
+}
+
+.menu-toggle span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--accent);
+  transition: all 0.3s ease;
+}
+
+.menu-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.menu-toggle.open span:nth-child(2) { opacity: 0; }
+.menu-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.aside-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 40;
+}
+
+.aside-overlay.show { display: block; }
+
+@media (max-width: 800px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+  .menu-toggle {
+    display: flex;
+  }
+  .aside {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: 280px;
+    z-index: 45;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+  }
+  .aside.open {
+    transform: translateX(0);
+  }
+  .brand {
+    padding-left: 4rem;
+  }
+}
+</style>
+</head>
+<body>
+<button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+<div class="aside-overlay" id="aside-overlay"></div>
+
+<div class="shell">
+  <aside class="aside" id="aside">
+    <div class="brand">
+      <div class="brand-name">A <em>Weekly</em><br>Journal</div>
+    </div>
+
+    <ul class="weeks" id="weeks">
+      <li><button data-week="1" class="active"><span class="num">01</span><span class="ttl">Breaking the labels</span></button></li>
+      <li><button data-week="2"><span class="num">02</span><span class="ttl">The tip of the iceberg</span></button></li>
+      <li><button data-week="3"><span class="num">03</span><span class="ttl">Eiffel, Minecraft, machines</span></button></li>
+      <li><button data-week="4"><span class="num">04</span><span class="ttl">Visual magic</span></button></li>
+      <li><button data-week="5"><span class="num">05</span><span class="ttl">ACMI &mdash; gears to worlds</span></button></li>
+      <li><button data-week="6"><span class="num">06</span><span class="ttl">The body hears</span></button></li>
+      <li><button data-week="7"><span class="num">07</span><span class="ttl">Bauhaus &amp; the utopia myth</span></button></li>
+      <li><button data-week="8"><span class="num">08</span><span class="ttl">Chaos &amp; the arrogance of science</span></button></li>
+      <li><button data-week="9"><span class="num">09</span><span class="ttl">Trees, prosthetics, premises</span></button></li>
+      <li><button data-week="10"><span class="num">10</span><span class="ttl">Liminal spaces &amp; let's play</span></button></li>
+      <li><button data-week="11"><span class="num">11</span><span class="ttl">Warhol, Maya, the void</span></button></li>
+      <li><button data-week="12" disabled><span class="num">12</span><span class="ttl">&mdash;</span></button></li>
+    </ul>
+
+    <div class="aside-foot">
+      <div>Melbourne</div>
+      <div class="now" id="now">&mdash;&mdash;:&mdash;&mdash;</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <iframe id="frame" title="Week content" src="/journal/week1.html"></iframe>
+  </main>
+</div>
+
+<script>
+const frame = document.getElementById('frame');
+const buttons = document.querySelectorAll('#weeks button');
+const nowEl = document.getElementById('now');
+const menuToggle = document.getElementById('menu-toggle');
+const aside = document.getElementById('aside');
+const overlay = document.getElementById('aside-overlay');
+
+function fmtNow() {
+  const parts = new Intl.DateTimeFormat('en-AU', {
+    timeZone: 'Australia/Melbourne', hour: '2-digit', minute: '2-digit', hour12: false
+  }).formatToParts(new Date());
+  const get = t => parts.find(p => p.type === t).value;
+  return `${get('hour')}:${get('minute')}`;
+}
+nowEl.textContent = fmtNow();
+setInterval(() => { nowEl.textContent = fmtNow(); }, 30000);
+
+function closeMenu() {
+  aside.classList.remove('open');
+  overlay.classList.remove('show');
+  menuToggle.classList.remove('open');
+}
+
+function openMenu() {
+  aside.classList.add('open');
+  overlay.classList.add('show');
+  menuToggle.classList.add('open');
+}
+
+menuToggle.addEventListener('click', () => {
+  if (aside.classList.contains('open')) closeMenu();
+  else openMenu();
+});
+overlay.addEventListener('click', closeMenu);
+
+function selectWeek(n) {
+  buttons.forEach(b => b.classList.toggle('active', b.dataset.week === String(n)));
+  frame.src = `/journal/week${n}.html`;
+  if (history.replaceState) {
+    history.replaceState(null, '', `/journal/#week${n}`);
+  }
+  if (window.innerWidth <= 800) closeMenu();
+}
+
+buttons.forEach(b => {
+  b.addEventListener('click', () => {
+    if (b.disabled) return;
+    selectWeek(parseInt(b.dataset.week, 10));
+  });
+});
+
+window.addEventListener('message', (e) => {
+  if (e.data && e.data.type === 'goto-week') {
+    selectWeek(e.data.week);
+  }
+});
+
+const initial = window.location.hash.match(/^#week(\d+)$/);
+if (initial) selectWeek(parseInt(initial[1], 10));
+</script>
+</body>
+</html>

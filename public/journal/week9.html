@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 9 &mdash; Trees, prosthetics, premises</title>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --text: #e0ebd8;
+  --dim: #849a82;
+  --accent: #a8d28c;
+}
+
+:root.season-spring {
+  --bg: #1a221a;
+  --bg2: #243024;
+  --foliage: #a8d28c;
+  --foliage-soft: #c8e0a8;
+  --trunk: #5a4838;
+  --season-label: 'spring';
+}
+:root.season-summer {
+  --bg: #0e1a18;
+  --bg2: #18302a;
+  --foliage: #4a8a5a;
+  --foliage-soft: #6cb27e;
+  --trunk: #3a2818;
+  --season-label: 'summer';
+}
+:root.season-autumn {
+  --bg: #1f1410;
+  --bg2: #2f1f14;
+  --foliage: #e8a755;
+  --foliage-soft: #f0c46c;
+  --trunk: #4a2e1a;
+  --season-label: 'autumn';
+}
+:root.season-winter {
+  --bg: #0e1418;
+  --bg2: #1a2230;
+  --foliage: #b8c8d8;
+  --foliage-soft: #d8e0e8;
+  --trunk: #2a2520;
+  --season-label: 'winter';
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Cormorant Garamond', serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 2s ease;
+}
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at 30% 20%, var(--bg2) 0%, var(--bg) 60%);
+  z-index: 0;
+  transition: background 2s ease;
+}
+
+.tree-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.tree-stage svg {
+  width: clamp(380px, 70vw, 900px);
+  height: 90vh;
+}
+
+.trunk-part { fill: var(--trunk); transition: fill 2s ease; }
+.foliage-part { fill: var(--foliage); transition: fill 2s ease, opacity 2s ease; }
+.foliage-soft { fill: var(--foliage-soft); transition: fill 2s ease, opacity 2s ease; }
+
+.winter .foliage-part, .winter .foliage-soft {
+  opacity: 0;
+}
+.snow {
+  fill: #d8e0e8;
+  opacity: 0;
+  transition: opacity 2s ease;
+}
+.winter .snow { opacity: 0.7; }
+
+.season-tag {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  z-index: 5;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--accent);
+  opacity: 0.7;
+  transition: color 2s, border-color 2s;
+}
+
+.page {
+  position: relative;
+  z-index: 2;
+  padding: 3rem clamp(1.5rem, 6vw, 5rem) 5rem;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.weekstamp {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+  transition: color 2s;
+}
+
+.title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-style: italic;
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  line-height: 0.95;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  margin-bottom: 3.5rem;
+}
+
+.body-text {
+  font-size: 1.18rem;
+  line-height: 1.85;
+  color: var(--text);
+}
+.body-text p { margin-bottom: 1.8rem; }
+.body-text em { font-style: italic; color: var(--accent); transition: color 2s; }
+
+.cross-link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--accent);
+  font-style: normal;
+  letter-spacing: 0.05em;
+  background: transparent;
+  border: none;
+  border-bottom: 1px dotted var(--accent);
+  cursor: pointer;
+  padding: 0;
+}
+.cross-link:hover { opacity: 0.7; }
+</style>
+</head>
+<body class="season-spring">
+<div class="atmosphere"></div>
+<div class="season-tag" id="season-tag">spring</div>
+
+<div class="tree-stage" id="tree">
+<svg viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYEnd meet">
+  <path class="trunk-part" d="M 480 1000 L 470 700 Q 465 650 480 600 L 485 480 Q 480 440 490 400 L 500 350 L 510 400 Q 520 440 515 480 L 520 600 Q 535 650 530 700 L 520 1000 Z"/>
+
+  <path class="trunk-part" d="M 490 450 Q 420 420 360 380 Q 340 370 330 360" stroke="var(--trunk)" stroke-width="14" fill="none"/>
+  <path class="trunk-part" d="M 510 450 Q 580 420 640 380 Q 660 370 670 360" stroke="var(--trunk)" stroke-width="14" fill="none"/>
+  <path class="trunk-part" d="M 495 380 Q 450 340 410 300" stroke="var(--trunk)" stroke-width="10" fill="none"/>
+  <path class="trunk-part" d="M 505 380 Q 550 340 590 300" stroke="var(--trunk)" stroke-width="10" fill="none"/>
+  <path class="trunk-part" d="M 500 340 L 510 270" stroke="var(--trunk)" stroke-width="8" fill="none"/>
+
+  <circle class="foliage-part" cx="500" cy="260" r="100" opacity="0.85"/>
+  <circle class="foliage-part" cx="380" cy="320" r="85" opacity="0.85"/>
+  <circle class="foliage-part" cx="620" cy="320" r="85" opacity="0.85"/>
+  <circle class="foliage-part" cx="320" cy="380" r="70" opacity="0.8"/>
+  <circle class="foliage-part" cx="680" cy="380" r="70" opacity="0.8"/>
+  <circle class="foliage-soft" cx="440" cy="240" r="55" opacity="0.6"/>
+  <circle class="foliage-soft" cx="560" cy="240" r="55" opacity="0.6"/>
+  <circle class="foliage-soft" cx="350" cy="290" r="40" opacity="0.5"/>
+  <circle class="foliage-soft" cx="650" cy="290" r="40" opacity="0.5"/>
+
+  <g class="snow">
+    <circle cx="500" cy="260" r="100"/>
+    <circle cx="380" cy="320" r="85"/>
+    <circle cx="620" cy="320" r="85"/>
+    <ellipse cx="500" cy="450" rx="35" ry="8" opacity="0.6"/>
+  </g>
+</svg>
+</div>
+
+<article class="page">
+  <div class="weekstamp">Week 09 &middot; 5 May</div>
+  <h1 class="title">Trees, prosthetics, premises</h1>
+  <p class="subtitle">on biomimicry and the question we never asked</p>
+  <div class="body-text">
+    <p>This week's lecture focused on dismantling the traditional hierarchy of <em>Human Exceptionalism</em> by showing the hidden intelligence of the natural world. We learned about the &lsquo;Wood Wide Web&rsquo; trees use to communicate and share resources, the fact that plants can perceive pain, and experiments showing animals have a complex sense of fairness, empathy, and morality. We also talked about biomimicry and prosthetics &mdash; like how integrating natural engineering (cheetah-inspired prosthetic legs) with the human body challenges the whole concept of being &lsquo;disabled&rsquo;, potentially turning it into being <em>super-abled</em>. That flip &mdash; from &lsquo;disabled&rsquo; to &lsquo;super-abled&rsquo; &mdash; is honestly another one of those Eiffel Tower / Distant Horizons moments I wrote about in <button class="cross-link" onclick="window.parent.postMessage({type:'goto-week',week:3},'*')">Week 3</button>. It's not new information, it's the same situation suddenly seen from a totally different altitude.</p>
+
+    <p>Honestly though, while the scientific evidence about plant communication and animal morality was fascinating, my reaction was kind of calm. To me it just isn't that shocking. Plants and animals have always been living beings &mdash; realising they have their own survival mechanisms, intelligence, and ways of interacting with the world feels more like a natural truth than some sudden revelation. They're alive, and life inherently looks for connection and balance.</p>
+
+    <p>What I want to actually push back on this week isn't anything about plants or animals &mdash; it's the academic narrative around humanity's relationship with nature. The lecture kept framing its arguments against the idea that &lsquo;humanity has arrogantly believed itself to be the absolute master of the Earth&rsquo;. When I see a claim that big, my instinct is to ask first whether the premise is even true, before asking why. (Same instinct I had in <button class="cross-link" onclick="window.parent.postMessage({type:'goto-week',week:8},'*')">Week 8</button> with chaos theory &mdash; sweeping claims about &lsquo;humanity&rsquo; or &lsquo;the universe&rsquo; usually deserve a second look before you accept them.)</p>
+
+    <p>Is humanity, as a whole, really that arrogant? I don't think the premise holds up. It's true that certain segments of humanity &mdash; driven by hyper-industrialisation or extreme capitalism &mdash; have acted with reckless arrogance towards nature. But can those specific factions really represent the entire human race? Throughout history, tons of indigenous cultures, agricultural societies, and modern environmentalists have lived with deep reverence for the natural world. Slapping the label of &lsquo;arrogant master&rsquo; onto the entire species is an <em>oversimplification</em>. Before we can genuinely learn from nature through biomimicry to fix our modern crises, I think we need to stop using these generalised, guilt-driven labels and look at our actually pretty diverse human histories more honestly.</p>
+  </div>
+</article>
+
+<script>
+const seasons = ['spring', 'summer', 'autumn', 'winter'];
+const root = document.documentElement;
+const body = document.body;
+const tag = document.getElementById('season-tag');
+let idx = 0;
+
+function applySeason() {
+  const s = seasons[idx];
+  body.className = `season-${s}`;
+  body.classList.toggle('winter', s === 'winter');
+  root.className = `season-${s}`;
+  tag.textContent = s;
+}
+applySeason();
+
+setInterval(() => {
+  idx = (idx + 1) % seasons.length;
+  applySeason();
+}, 5000);
+</script>
+</body>
+</html>

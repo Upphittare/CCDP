@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Out of Sync</title>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  background: #0a0908;
+  color: #c97064;
+  min-height: 100vh;
+  font-family: 'Fraunces', serif;
+  overflow: hidden;
+}
+
+.stage {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+.statement {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(1.8rem, 5vw, 3.2rem);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  max-width: 32rem;
+  opacity: 0;
+  animation: rise 1.4s 0.2s ease forwards;
+}
+
+.reverse-clock {
+  font-family: 'Space Mono', monospace;
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.05em;
+  color: #c97064;
+  opacity: 0;
+  animation: rise 1.4s 0.6s ease forwards;
+}
+
+.sub {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #5a4a45;
+  opacity: 0;
+  animation: rise 1.4s 1s ease forwards;
+}
+
+.sub a {
+  color: #8a6b65;
+  text-decoration: none;
+  border-bottom: 1px solid #5a4a45;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.veil {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(201, 112, 100, 0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+</style>
+</head>
+<body>
+<div class="veil"></div>
+<div class="stage">
+  <div class="statement">Your time is not our time.</div>
+  <div class="reverse-clock" id="rclock">23:59:59</div>
+  <div class="sub">returning to the threshold &nbsp;&middot;&nbsp; <a href="/">try again</a></div>
+</div>
+<script>
+const el = document.getElementById('rclock');
+let t = new Date();
+function tick() {
+  t = new Date(t.getTime() - 1000);
+  const h = String(t.getHours()).padStart(2, '0');
+  const m = String(t.getMinutes()).padStart(2, '0');
+  const s = String(t.getSeconds()).padStart(2, '0');
+  el.textContent = `${h}:${m}:${s}`;
+}
+tick();
+setInterval(tick, 1000);
+setTimeout(() => { window.location.href = '/'; }, 6000);
+</script>
+</body>
+</html>
